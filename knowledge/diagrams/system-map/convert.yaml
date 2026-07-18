@@ -16,8 +16,8 @@ sources:
     - README.md
     - ".output/**"
     - ".original/**"
-    - index.md
-    - log.md
+    - "**/index.md"
+    - "**/log.md"
   unlisted: individual
 assets:
   mode: generate

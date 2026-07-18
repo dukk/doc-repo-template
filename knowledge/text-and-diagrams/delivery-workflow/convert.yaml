@@ -17,8 +17,8 @@ sources:
     - README.md
     - ".output/**"
     - ".original/**"
-    - index.md
-    - log.md
+    - "**/index.md"
+    - "**/log.md"
   unlisted: ignore
 documents:
   - name: delivery-workflow

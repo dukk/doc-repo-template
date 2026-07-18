@@ -35,6 +35,8 @@ Supported formats: `pdf`, `docx`, `html`, `pptx`.
 - `documents[]` groups ordered sources into named outputs; `sources.unlisted` controls leftovers (`individual` | `ignore` | `error`).
 - `assets.mode: generate` copies local images and can render Mermaid to SVG **before** Pandoc.
 - `links.markdown: output` rewrites `.md` links to sibling output artifacts (or same-document anchors).
+- `options.cover_page: true` prepends a title/subtitle/author/date block and a page break before the body.
+- `options.reference_doc` (package-relative path, usually `.original/*.docx`) is passed to Pandoc as `--reference-doc` for **docx** and **pptx**, preserving Word styles, headers, and footers from the reference. Deconstruct sets this automatically for DOCX imports.
 - Reserved `index.md` / `log.md` are not packages and are skipped when walking.
 - Default output is `.output/` beside the package (gitignored).
 - Convert tooling lives in [doc-repo-tools](https://github.com/dukk/doc-repo-tools) (`@dukk/doc-repo-convert`), not in this template.

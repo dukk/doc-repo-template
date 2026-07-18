@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../doc-repo-tools"
+		},
+		{
+			"path": "../research-repo-template"
 		}
 	],
 	"settings": {}

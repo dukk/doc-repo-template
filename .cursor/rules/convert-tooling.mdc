@@ -11,6 +11,8 @@ alwaysApply: false
 - Supported formats remain `pdf`, `docx`, `html`, `pptx`.
 - Convert **document packages** (`convert.yaml` + Markdown sources); skip reserved `index.md` / `log.md`.
 - Honor `convert.yaml` for out/formats/documents/sources/assets/links/options/metadata; CLI `--format` / `--out` override when provided.
+- For DOCX/PPTX styling, headers, and footers, prefer `options.reference_doc` (usually the package `.original/*.docx`) over inventing styles in Markdown.
+- `options.cover_page: true` should emit a title page with a page break, not only a heading.
 - Prepare image/Mermaid artifacts before Pandoc when `assets.mode: generate`.
 - Rewrite Markdown links according to `links.markdown` using the output manifest.
 - Map OKF frontmatter into Pandoc metadata; merge package + document-group metadata on top.
