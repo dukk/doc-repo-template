@@ -1,0 +1,17 @@
+---
+description: OKF authoring rules for knowledge bundle Markdown
+globs: knowledge/**/*.md
+alwaysApply: false
+---
+
+# OKF knowledge edits
+
+When editing files under `knowledge/`:
+
+- Concepts are document packages: `<slug>/document.md` + `convert.yaml`.
+- `document.md` (not `index.md` / `log.md`) must keep YAML frontmatter with a non-empty `type`.
+- Prefer recommended fields: `title`, `description`, `tags`, `timestamp`.
+- Use bundle-relative absolute links: `[Title](/category/slug/document.md)`.
+- Update category + root `knowledge/index.md` when adding or renaming concepts.
+- Add a newest-first entry to `knowledge/log.md` for meaningful structural changes.
+- After bulk edits, run `pnpm okf:check`.

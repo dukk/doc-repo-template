@@ -1,0 +1,17 @@
+---
+description: Rules when working on convert / export workflows
+globs: knowledge/**/convert.yaml
+alwaysApply: false
+---
+
+# Convert tooling
+
+- Convert CLI is the published package `@dukk/doc-repo-convert` ([doc-repo-tools](https://github.com/dukk/doc-repo-tools)); do not reintroduce an in-repo `tools/convert` copy.
+- Keep Pandoc as the conversion engine; do not add a parallel export stack without a clear need.
+- Supported formats remain `pdf`, `docx`, `html`, `pptx`.
+- Convert **document packages** (`convert.yaml` + Markdown sources); skip reserved `index.md` / `log.md`.
+- Honor `convert.yaml` for out/formats/documents/sources/assets/links/options/metadata; CLI `--format` / `--out` override when provided.
+- Prepare image/Mermaid artifacts before Pandoc when `assets.mode: generate`.
+- Rewrite Markdown links according to `links.markdown` using the output manifest.
+- Map OKF frontmatter into Pandoc metadata; merge package + document-group metadata on top.
+- Document system dependencies (Pandoc, Mermaid CLI, PDF engine) in the root README and the convert package README.

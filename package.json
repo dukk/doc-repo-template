@@ -1,0 +1,23 @@
+{
+  "name": "doc-repo-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OKF document bundle template with Pandoc convert tooling",
+  "type": "module",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "convert": "doc-convert",
+    "okf:check": "node scripts/okf-check.mjs",
+    "init-repo": "node scripts/init-repo.mjs",
+    "link-harness": "node scripts/link-harness.mjs",
+    "prepare": "node scripts/link-harness.mjs"
+  },
+  "dependencies": {
+    "@dukk/doc-repo-convert": "^0.1.0",
+    "yaml": "^2.8.0"
+  }
+}

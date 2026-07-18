@@ -1,0 +1,30 @@
+out: .output
+formats:
+  - pdf
+  - docx
+options:
+  toc: false
+  cover_page: false
+  standalone: true
+metadata:
+  author: ""
+pandoc_args: []
+sources:
+  include:
+    - "**/*.md"
+  exclude:
+    - README.md
+    - ".output/**"
+    - index.md
+    - log.md
+  unlisted: individual
+assets:
+  mode: reference
+  directory: assets
+  diagrams:
+    mermaid: false
+  copy_referenced_images: false
+links:
+  markdown: output
+  missing_target: warn
+  external: preserve
