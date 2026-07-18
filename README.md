@@ -1,10 +1,12 @@
 # Doc Repo Template
 
-Template repository for **OKF document bundles**: Markdown source-of-truth concepts plus Pandoc-based export via [`@dukk/doc-repo-convert`](https://github.com/dukk/doc-repo-tools).
+> **Why this exists:** I've spun up nearly identical document repos almost a dozen times. This is the canonical template I clone from when starting a new OKF bundle so I stop rebuilding the same scaffolding from scratch.
+
+Template repository for **OKF document bundles**: Markdown source-of-truth concepts plus Pandoc-based export via `[@dukk/doc-repo-convert](https://github.com/dukk/doc-repo-tools)`.
 
 Fork or clone this repo when you need a new document-generation project (company knowledge, product docs, client packs, etc.).
 
-Sources live under [`knowledge/`](knowledge/) in [Open Knowledge Format (OKF) v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
+Sources live under `[knowledge/](knowledge/)` in [Open Knowledge Format (OKF) v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md).
 
 License: [Apache-2.0](LICENSE).
 
@@ -32,7 +34,7 @@ pnpm link-harness   # wires Claude/Gemini skill & agent bridges
 
 **Pandoc** is required for document export. Install from [pandoc.org](https://pandoc.org/installing.html) and ensure `pandoc` is on your `PATH`. Mermaid CLI (`mmdc`) is needed when a package sets `assets.diagrams.mermaid: true`.
 
-The [`.npmrc`](.npmrc) routes `@dukk` to GitHub Packages and reads `NODE_AUTH_TOKEN`.
+The `[.npmrc](.npmrc)` routes `@dukk` to GitHub Packages and reads `NODE_AUTH_TOKEN`.
 
 ## Customize for a new project
 
@@ -60,13 +62,15 @@ Reserved navigation files (not packages): `knowledge/index.md`, `knowledge/log.m
 
 Sample concepts by document style:
 
-| Style | Path | Sample |
-|-------|------|--------|
-| Text-heavy | [`knowledge/text-heavy/`](knowledge/text-heavy/) | [Operating model](knowledge/text-heavy/operating-model/) |
-| Text + diagrams | [`knowledge/text-and-diagrams/`](knowledge/text-and-diagrams/) | [Delivery workflow](knowledge/text-and-diagrams/delivery-workflow/) |
-| Mostly diagrams | [`knowledge/diagrams/`](knowledge/diagrams/) | [System map](knowledge/diagrams/system-map/) |
 
-Starter packages: [`templates/`](templates/) (`company`, `brand`, `person`, `service`, `playbook`, `template`, `policy`, `product`, `finance`, `reference`).
+| Style           | Path                                                           | Sample                                                              |
+| --------------- | -------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Text-heavy      | `[knowledge/text-heavy/](knowledge/text-heavy/)`               | [Operating model](knowledge/text-heavy/operating-model/)            |
+| Text + diagrams | `[knowledge/text-and-diagrams/](knowledge/text-and-diagrams/)` | [Delivery workflow](knowledge/text-and-diagrams/delivery-workflow/) |
+| Mostly diagrams | `[knowledge/diagrams/](knowledge/diagrams/)`                   | [System map](knowledge/diagrams/system-map/)                        |
+
+
+Starter packages: `[templates/](templates/)` (`company`, `brand`, `person`, `service`, `playbook`, `template`, `policy`, `product`, `finance`, `reference`).
 
 ## Convert Markdown to other formats
 
@@ -76,7 +80,7 @@ pnpm convert --format pdf knowledge/text-and-diagrams/
 pnpm convert knowledge/diagrams/system-map --out .output
 ```
 
-Formats and output default from each package's `convert.yaml` (usually `.output` next to the package). Supported formats: `pdf`, `docx`, `html`, `pptx`. Convert CLI: [`@dukk/doc-repo-convert`](https://github.com/dukk/doc-repo-tools).
+Formats and output default from each package's `convert.yaml` (usually `.output` next to the package). Supported formats: `pdf`, `docx`, `html`, `pptx`. Convert CLI: `[@dukk/doc-repo-convert](https://github.com/dukk/doc-repo-tools)`.
 
 ## OKF conformance check
 
@@ -86,13 +90,15 @@ pnpm okf:check
 
 ## AI harness (Cursor / Claude / Gemini)
 
-| File / path | Role |
-|-------------|------|
-| [`AGENTS.md`](AGENTS.md) | Canonical agent instructions |
-| [`CLAUDE.md`](CLAUDE.md) | Claude Code wrapper |
-| [`GEMINI.md`](GEMINI.md) | Gemini CLI wrapper |
-| [`.agents/skills/`](.agents/skills/) | Shared skills |
-| [`.agents/agents/`](.agents/agents/) | Shared subagent personas |
-| [`.cursor/rules/`](.cursor/rules/) | Cursor-scoped rules |
+
+| File / path                          | Role                         |
+| ------------------------------------ | ---------------------------- |
+| `[AGENTS.md](AGENTS.md)`             | Canonical agent instructions |
+| `[CLAUDE.md](CLAUDE.md)`             | Claude Code wrapper          |
+| `[GEMINI.md](GEMINI.md)`             | Gemini CLI wrapper           |
+| `[.agents/skills/](.agents/skills/)` | Shared skills                |
+| `[.agents/agents/](.agents/agents/)` | Shared subagent personas     |
+| `[.cursor/rules/](.cursor/rules/)`   | Cursor-scoped rules          |
+
 
 After clone, run `pnpm link-harness` (also runs on `pnpm install` via `prepare`) so `.claude/` and `.gemini/` point at the shared `.agents/` trees.
