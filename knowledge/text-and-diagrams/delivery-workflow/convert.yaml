@@ -16,6 +16,7 @@ sources:
   exclude:
     - README.md
     - ".output/**"
+    - ".original/**"
     - index.md
     - log.md
   unlisted: ignore

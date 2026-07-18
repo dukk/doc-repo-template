@@ -35,7 +35,7 @@ function walkMd(dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === ".output" || entry.name === "node_modules") continue;
+      if (entry.name === ".output" || entry.name === ".original" || entry.name === "node_modules") continue;
       files.push(...walkMd(full));
     } else if (entry.name.toLowerCase().endsWith(".md")) {
       files.push(full);
@@ -54,7 +54,7 @@ function walkDirs(dir) {
   if (!existsSync(dir)) return dirs;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    if (entry.name === ".output" || entry.name === "node_modules") continue;
+    if (entry.name === ".output" || entry.name === ".original" || entry.name === "node_modules") continue;
     const full = path.join(dir, entry.name);
     dirs.push(full);
     dirs.push(...walkDirs(full));

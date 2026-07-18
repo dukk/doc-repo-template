@@ -37,7 +37,18 @@ Starter packages: `templates/<type>/` (`company`, `brand`, `person`, `service`, 
 
 ## Repo init
 
-After clone (or when resetting navigation metadata): `pnpm init-repo` installs deps (including `@dukk/doc-repo-convert` from GitHub Packages), links the AI harness, rebuilds `knowledge/log.md` + `index.md` files from existing concept packages, and runs `okf:check`. It does not delete knowledge concept packages. Set `NODE_AUTH_TOKEN` for GitHub Packages (see root README).
+After clone (or when resetting navigation metadata): `pnpm init-repo` installs deps (including `@dukk/doc-repo-convert` and `@dukk/doc-repo-deconstruct` from GitHub Packages), links the AI harness, rebuilds `knowledge/log.md` + `index.md` files from existing concept packages, and runs `okf:check`. It does not delete knowledge concept packages. Set `NODE_AUTH_TOKEN` for GitHub Packages (see root README).
+
+## Deconstruct / import
+
+Pandoc must be installed for the built-in extractor. Deconstruct CLI ships as [`@dukk/doc-repo-deconstruct`](https://github.com/dukk/doc-repo-tools). Original sources are copied to `.original/` inside each package and are never modified by tooling.
+
+```bash
+pnpm deconstruct imports/handbook.docx --out knowledge/text-heavy/handbook
+pnpm deconstruct imports/ --out knowledge/imported
+```
+
+Optional custom extractors: repo-root `deconstruct.extractors.yaml`.
 
 ## Convert / publish
 
@@ -58,6 +69,7 @@ Shared skills live in [`.agents/skills/`](.agents/skills/) (bridged for Claude v
 | Skill | Use when |
 |-------|----------|
 | `okf-author` | Creating or updating OKF concepts, indexes, links |
+| `deconstruct-document` | Importing legacy documents into OKF packages |
 | `convert-document` | Exporting Markdown to PDF/DOCX/HTML/PPTX |
 | `knowledge-audit` | Checking OKF conformance and soft link warnings |
 

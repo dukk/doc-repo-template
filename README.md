@@ -80,7 +80,18 @@ pnpm convert --format pdf knowledge/text-and-diagrams/
 pnpm convert knowledge/diagrams/system-map --out .output
 ```
 
-Formats and output default from each package's `convert.yaml` (usually `.output` next to the package). Supported formats: `pdf`, `docx`, `html`, `pptx`. Convert CLI: `[@dukk/doc-repo-convert](https://github.com/dukk/doc-repo-tools)`.
+Formats and output default from each package's `convert.yaml` (usually `.output` next to the package). Supported formats: `pdf`, `docx`, `html`, `pptx`. Convert CLI: [`@dukk/doc-repo-convert`](https://github.com/dukk/doc-repo-tools).
+
+## Deconstruct existing documents
+
+Import legacy DOCX, PDF, and other Pandoc-readable sources into OKF packages. Originals stay in `.original/` for reference.
+
+```bash
+pnpm deconstruct imports/handbook.docx --out knowledge/text-heavy/handbook
+pnpm deconstruct imports/ --out knowledge/imported
+```
+
+See [`deconstruct.extractors.yaml`](deconstruct.extractors.yaml) for custom extractor plugins. Deconstruct CLI: [`@dukk/doc-repo-deconstruct`](https://github.com/dukk/doc-repo-tools).
 
 ## OKF conformance check
 
