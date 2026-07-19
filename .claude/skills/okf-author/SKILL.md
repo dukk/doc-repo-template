@@ -16,12 +16,12 @@ description: >-
 
 ## Rules
 
-1. Every concept is a directory with `convert.yaml` plus one or more Markdown sources (`document.md` and/or grouped files).
+1. Every concept is a directory with `convert.yaml` plus one or more Markdown sources (title-named `.md` files from frontmatter `title`, and/or grouped files).
 2. Concept Markdown (not `index.md` / `log.md`) must have YAML frontmatter with non-empty `type`.
 3. Recommended fields: `title`, `description`, `tags`, `timestamp` (ISO 8601). Extensions: `status`, `audience`, `resource`.
 4. Start by copying `templates/<type>/` into `knowledge/<category>/<slug>/`.
 5. Use kebab-case package directory names; concept ID is the path under `knowledge/` to the package.
-6. Prefer links like `[Title](/category/slug/document.md)` (or specific source files) from the bundle root.
+6. Prefer links like `[Title](/category/slug/<title-slug>.md)` from the bundle root (kebab-case from `title`).
 7. Configure `convert.yaml` `documents[]` when multiple sources should combine into one export.
 8. Update category + root `index.md`; add a newest-first note in `knowledge/log.md` for meaningful changes.
 9. Run `pnpm okf:check` before finishing.

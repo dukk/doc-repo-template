@@ -32,7 +32,7 @@ pnpm deconstruct source.docx --out knowledge/foo --type Policy --title "Foo" --f
 knowledge/<category>/<slug>/
   .original/<source-file>     # byte-identical copy; never edited by tooling
   deconstruct.yaml            # provenance (sha256, extractor, imported_at)
-  document.md                 # OKF Markdown + frontmatter
+  <title-slug>.md             # OKF Markdown + frontmatter (kebab-case from title)
   convert.yaml                # ready for pnpm convert
   assets/…                    # extracted media when present
 ```
@@ -45,7 +45,7 @@ Register external tools in repo-root `deconstruct.extractors.yaml` (see [doc-rep
 
 1. Place source files outside `knowledge/` or import directly into the target package path.
 2. Run deconstruct; verify `.original/` matches the source bytes.
-3. Edit generated `document.md` frontmatter/body as needed.
+3. Edit generated title-named `.md` source frontmatter/body as needed.
 4. Update category + root indexes and `knowledge/log.md`.
 5. Run `pnpm okf:check`, then `pnpm convert` to verify round-trip export.
 

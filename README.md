@@ -39,7 +39,7 @@ The `[.npmrc](.npmrc)` routes `@dukk` to GitHub Packages and reads `NODE_AUTH_TO
 ## Customize for a new project
 
 1. Update `package.json` `name` / `description`.
-2. Copy a package from `templates/<type>/` into `knowledge/<category>/<slug>/`, then edit `document.md` and `convert.yaml`.
+2. Copy a package from `templates/<type>/` into `knowledge/<category>/<slug>/`, then edit the title-named `.md` source and `convert.yaml`.
 3. Run `pnpm init-repo` to rebuild indexes/log and re-verify tooling (or edit indexes by hand).
 4. Run `pnpm okf:check` to validate structure.
 
@@ -50,7 +50,7 @@ Every concept (and every template) is a directory with `convert.yaml` plus one o
 ```
 my-doc/
   convert.yaml       # formats, out, source groups, assets, link policy
-  document.md        # classic single-source package
+  operating-model.md
   # — or multiple sources —
   intro.md
   body.md

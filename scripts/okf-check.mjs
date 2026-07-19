@@ -8,12 +8,15 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
+import {
+  CONVERT_CONFIG_FILE,
+  LEGACY_DOCUMENT_FILE,
+  resolvePrimarySourcePath,
+} from "./primary-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const bundleRoot = path.join(root, "knowledge");
 const RESERVED = new Set(["index.md", "log.md"]);
-const DOCUMENT_FILE = "document.md";
-const CONVERT_CONFIG_FILE = "convert.yaml";
 
 /** @type {string[]} */
 const errors = [];
@@ -120,8 +123,10 @@ function resolveLink(fromFile, href) {
   if (existsSync(target) && statSync(target).isDirectory()) {
     const index = path.join(target, "index.md");
     if (existsSync(index)) return index;
-    const doc = path.join(target, DOCUMENT_FILE);
-    if (existsSync(doc)) return doc;
+    const primary = resolvePrimarySourcePath(target);
+    if (primary) return primary;
+    const legacy = path.join(target, LEGACY_DOCUMENT_FILE);
+    if (existsSync(legacy)) return legacy;
     const cfg = path.join(target, CONVERT_CONFIG_FILE);
     if (existsSync(cfg)) return cfg;
     return target;

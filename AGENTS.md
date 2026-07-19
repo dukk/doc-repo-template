@@ -4,14 +4,14 @@ Canonical instructions for AI agents working in this repository (Cursor, Claude 
 
 ## Purpose
 
-This repo is a **source-of-truth OKF document bundle**. All concepts are Markdown conforming to **OKF v0.1** under [`knowledge/`](knowledge/).
+This repo is a **source-of-truth OKF document bundle**. All concepts are Markdown conforming to **OKF v0.1** under [`knowledge/`](knowledge/), structured as **document packages** (title-named `.md` sources + `convert.yaml`).
 
 ## Non-negotiables
 
-1. **Document packages only** for business documents in `knowledge/` and `templates/`: each concept is a directory with `document.md` + `convert.yaml`.
-2. **OKF frontmatter required** on every `document.md` (`type` is mandatory). Reserved files `index.md` and `log.md` do not use concept frontmatter (root `index.md` may declare `okf_version`).
+1. **Document packages only** for business documents in `knowledge/` and `templates/`: each concept is a directory with Markdown source(s) + `convert.yaml`.
+2. **OKF frontmatter required** on every concept Markdown file (`type` is mandatory). Reserved files `index.md` and `log.md` do not use concept frontmatter (root `index.md` may declare `okf_version`).
 3. **Docs stay true.** If instructions, skills, or generated content conflict with an existing concept, **surface the conflict** — do not silently invent a merge.
-4. **Prefer bundle-relative absolute links** from the knowledge root: `[Operating model](/text-heavy/operating-model/document.md)`.
+4. **Prefer bundle-relative absolute links** from the knowledge root: `[Operating model](/text-heavy/operating-model/operating-model.md)`.
 5. **Edit harness sources once:** `AGENTS.md`, `.agents/skills/`, `.agents/agents/`. Do not duplicate instructions into tool-specific wrappers except for tool-only notes.
 
 ## Sample map

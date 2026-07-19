@@ -10,7 +10,7 @@ audience: internal
 
 # Purpose
 
-Diagram-first sample. Captions are short; the maps carry the meaning. Pair with [Operating model](/text-heavy/operating-model/document.md) and [Delivery workflow](/text-and-diagrams/delivery-workflow/) when you need narrative detail.
+Diagram-first sample. Captions are short; the maps carry the meaning. Pair with [Operating model](/text-heavy/operating-model/operating-model.md) and [Delivery workflow](/text-and-diagrams/delivery-workflow/) when you need narrative detail.
 
 # Bundle layout
 

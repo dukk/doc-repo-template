@@ -99,4 +99,4 @@ When you add or revise concepts under `knowledge/`:
 # Related samples
 
 - [Delivery workflow](/text-and-diagrams/delivery-workflow/) — how planning becomes shipped work (prose + diagrams)
-- [System map](/diagrams/system-map/document.md) — diagram-first view of tools and flows
+- [System map](/diagrams/system-map/system-map.md) — diagram-first view of tools and flows

@@ -18,8 +18,8 @@
     "prepare": "node scripts/link-harness.mjs"
   },
   "dependencies": {
-    "@dukk/doc-repo-convert": "^0.1.2",
-    "@dukk/doc-repo-deconstruct": "^0.1.1",
+    "@dukk/doc-repo-convert": "^0.1.3",
+    "@dukk/doc-repo-deconstruct": "^0.1.2",
     "yaml": "^2.8.0"
   }
 }
