@@ -9,8 +9,11 @@ importers:
   .:
     dependencies:
       '@dukk/doc-repo-convert':
-        specifier: ^0.1.0
-        version: 0.1.0(puppeteer@25.3.0)(tailwindcss@4.3.3)
+        specifier: ^0.1.2
+        version: 0.1.2(puppeteer@25.3.0)(tailwindcss@4.3.3)
+      '@dukk/doc-repo-deconstruct':
+        specifier: ^0.1.1
+        version: 0.1.1
       yaml:
         specifier: ^2.8.0
         version: 2.9.0
@@ -26,8 +29,13 @@ packages:
   '@chevrotain/types@11.1.2':
     resolution: {integrity: sha512-U+HFai5+zmJCkK86QsaJtoITlboZHBqrVketcO2ROv865xfCMSFpELQoz1GkX5GzME8pTa+3kbKrZHQtI0gdbw==}
 
-  '@dukk/doc-repo-convert@0.1.0':
-    resolution: {integrity: sha512-4QoKEpVgN2pCsR9zxjJHSEJIyCwQtqQuZXSSooRd/cRbbqr8zaxMsotebMm7iy+T/3ncWvLlcHpiXGmuxxz+LA==, tarball: https://npm.pkg.github.com/download/@dukk/doc-repo-convert/0.1.0/9ddaf8690981fb1199dc890cd8534e58cac192e9}
+  '@dukk/doc-repo-convert@0.1.2':
+    resolution: {integrity: sha512-gFuEWS4byynYX87+xM7c0AFZi+rKi3sL4xfE7cMym9DcP+otJdiuxRF2QbAQcz4Q0Yb6TuFJMPdukGY2OsGdvA==, tarball: https://npm.pkg.github.com/download/@dukk/doc-repo-convert/0.1.2/93075c5c0de89d5c2b907f58fd5582fb3f6beb40}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  '@dukk/doc-repo-deconstruct@0.1.1':
+    resolution: {integrity: sha512-aNxjTVQxIZAAW6H6aUY8sLCCSIq3mUw1y2EjxCJFfTDHPOYkg14ldqqtkpdRKJGQTo58Sw3fXnN6eSwPyQTWoQ==, tarball: https://npm.pkg.github.com/download/@dukk/doc-repo-deconstruct/0.1.1/ea0ce8e2c13be1f7bb9a88261d86270450799156}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -830,7 +838,7 @@ snapshots:
 
   '@chevrotain/types@11.1.2': {}
 
-  '@dukk/doc-repo-convert@0.1.0(puppeteer@25.3.0)(tailwindcss@4.3.3)':
+  '@dukk/doc-repo-convert@0.1.2(puppeteer@25.3.0)(tailwindcss@4.3.3)':
     dependencies:
       '@mermaid-js/mermaid-cli': 11.16.0(puppeteer@25.3.0)(tailwindcss@4.3.3)
       yaml: 2.9.0
@@ -841,6 +849,10 @@ snapshots:
       - playwright-core
       - puppeteer
       - tailwindcss
+
+  '@dukk/doc-repo-deconstruct@0.1.1':
+    dependencies:
+      yaml: 2.9.0
 
   '@floating-ui/core@1.8.0':
     dependencies:

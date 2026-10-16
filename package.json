@@ -10,7 +10,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "convert": "doc-convert",
+    "convert": "node scripts/convert.mjs",
     "deconstruct": "doc-deconstruct",
     "okf:check": "node scripts/okf-check.mjs",
     "init-repo": "node scripts/init-repo.mjs",
@@ -18,8 +18,8 @@
     "prepare": "node scripts/link-harness.mjs"
   },
   "dependencies": {
-    "@dukk/doc-repo-convert": "^0.1.3",
-    "@dukk/doc-repo-deconstruct": "^0.1.2",
+    "@dukk/doc-repo-convert": "^0.1.2",
+    "@dukk/doc-repo-deconstruct": "^0.1.1",
     "yaml": "^2.8.0"
   }
 }

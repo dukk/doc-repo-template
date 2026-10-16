@@ -1,19 +1,21 @@
 ---
 description: Rules when working on convert / export workflows
-globs: knowledge/**/convert.yaml
+globs: publications/**/convert.yaml
 alwaysApply: false
 ---
 
 # Convert tooling
 
 - Convert CLI is the published package `@dukk/doc-repo-convert` ([doc-repo-tools](https://github.com/dukk/doc-repo-tools)); do not reintroduce an in-repo `tools/convert` copy.
+- Repo wrapper: `pnpm convert` → `scripts/convert.mjs` merges `*.meta-data.yml` into temp Markdown for publications, then calls `doc-convert`.
 - Keep Pandoc as the conversion engine; do not add a parallel export stack without a clear need.
 - Supported formats remain `pdf`, `docx`, `html`, `pptx`.
-- Convert **document packages** (`convert.yaml` + Markdown sources); skip reserved `index.md` / `log.md`.
+- Convert **publication packages** under `publications/` (`convert.yaml` + Markdown sources + matching `<stem>.meta-data.yml`); skip reserved `index.md` / `log.md`.
+- Do **not** convert `knowledge/` — those are one-concept OKF atoms, not export packages.
 - Honor `convert.yaml` for out/formats/documents/sources/assets/links/options/metadata; CLI `--format` / `--out` override when provided.
+- Publication identity lives in `<stem>.meta-data.yml` (not Markdown frontmatter). The sidecar `knowledge:` key is for cross-refs only and is stripped before Pandoc.
 - For DOCX/PPTX styling, headers, and footers, prefer `options.reference_doc` (usually the package `.original/*.docx`) over inventing styles in Markdown.
 - `options.cover_page: true` should emit a title page with a page break, not only a heading.
 - Prepare image/Mermaid artifacts before Pandoc when `assets.mode: generate`.
 - Rewrite Markdown links according to `links.markdown` using the output manifest.
-- Map OKF frontmatter into Pandoc metadata; merge package + document-group metadata on top.
 - Document system dependencies (Pandoc, Mermaid CLI, PDF engine) in the root README and the convert package README.

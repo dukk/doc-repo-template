@@ -12,5 +12,6 @@ See the skill and subagent tables in [AGENTS.md](AGENTS.md).
 ## Working style
 
 - Treat `knowledge/` as the OKF bundle root for progressive disclosure (`index.md` first).
+- Publishable documents live under `publications/` (sidecar metadata + convert).
 - Run `pnpm okf:check` after structural edits.
 - Prefer activating `okf-author`, `convert-document`, or `knowledge-audit` for those tasks.

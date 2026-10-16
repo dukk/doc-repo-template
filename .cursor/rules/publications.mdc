@@ -1,0 +1,19 @@
+---
+description: Rules when authoring publication packages
+globs: publications/**/*
+alwaysApply: false
+---
+
+# Publication edits
+
+When editing under `publications/`:
+
+- Nest packages: `publications/company/<slug>/` (internal) or `publications/clients/<client>/<slug>/` (client-specific).
+- Each package is a directory: `<slug>.md` + `<slug>.meta-data.yml` + `convert.yaml`.
+- Markdown must **not** contain YAML frontmatter; put identity in the sidecar.
+- List related knowledge concepts under sidecar `knowledge:` (bundle-relative paths like `/company/jdlxp-llc.md`).
+- Do **not** link from publication body into `knowledge/`.
+- Knowledge concepts may link to this publication or a heading.
+- Export with `pnpm convert publications/company/<slug>` (or the client path); uses `scripts/convert.mjs` + Pandoc.
+- Do not commit `.output/`.
+- After structural changes, run `pnpm okf:check`.

@@ -8,10 +8,12 @@ alwaysApply: false
 
 When editing files under `knowledge/`:
 
-- Concepts are document packages: `<slug>/<title-slug>.md` + `convert.yaml`.
+- Concepts are **one Markdown file each** (`<category>/<slug>.md`) with OKF frontmatter.
 - Concept source `.md` files (not `index.md` / `log.md`) must keep YAML frontmatter with a non-empty `type`.
 - Prefer recommended fields: `title`, `description`, `tags`, `timestamp`.
-- Use bundle-relative absolute links: `[Title](/category/slug/<title-slug>.md)`.
+- **No `convert.yaml` under `knowledge/`.** Export lives in `publications/`.
+- Use bundle-relative absolute links: `[Title](/category/slug.md)`.
+- Link publications as `[Title](/publications/company/slug/slug.md)` or `/publications/clients/<client>/slug/slug.md`.
 - Update category + root `knowledge/index.md` when adding or renaming concepts.
 - Add a newest-first entry to `knowledge/log.md` for meaningful structural changes.
 - After bulk edits, run `pnpm okf:check`.

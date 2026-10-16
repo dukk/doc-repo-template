@@ -1,7 +1,7 @@
 ---
 name: deconstruct-document
 description: >-
-  Import existing documents into OKF Markdown packages using the
+  Import existing documents into publication packages using the
   doc-repo deconstruct CLI. Originals are preserved under .original/.
   Use when onboarding legacy DOCX, PDF, or other source files.
 ---
@@ -16,41 +16,39 @@ description: >-
 ## Commands
 
 ```bash
-# Import a single file into a new OKF package
-pnpm deconstruct imports/handbook.docx --out knowledge/text-heavy/handbook
+# Import a single file into a new publication package
+pnpm deconstruct imports/handbook.docx --out publications/company/handbook
 
 # Batch import every file in a directory
-pnpm deconstruct imports/ --out knowledge/imported
+pnpm deconstruct imports/ --out publications/imported
 
 # Override OKF type/title or force overwrite of generated files
-pnpm deconstruct source.docx --out knowledge/foo --type Policy --title "Foo" --force
+pnpm deconstruct source.docx --out publications/company/foo --type Policy --title "Foo" --force
 ```
+
+Prefer `publications/` for multi-concept publishable imports. After import, move identity from Markdown frontmatter into `<slug>.meta-data.yml` (no frontmatter on publication Markdown) before relying on `pnpm convert`.
 
 ## Package layout after import
 
 ```
-knowledge/<category>/<slug>/
+publications/company/<slug>/
   .original/<source-file>     # byte-identical copy; never edited by tooling
   deconstruct.yaml            # provenance (sha256, extractor, imported_at)
-  <title-slug>.md             # OKF Markdown + frontmatter (kebab-case from title)
+  <title-slug>.md             # Markdown body (strip frontmatter for publications)
+  <title-slug>.meta-data.yml  # identity + knowledge: refs
   convert.yaml                # ready for pnpm convert
   assets/…                    # extracted media when present
 ```
 
 ## Custom extractors
 
-Register external tools in repo-root `deconstruct.extractors.yaml` (see [doc-repo-tools](https://github.com/dukk/doc-repo-tools)). Custom matchers run before the Pandoc fallback.
+Optional repo-root `deconstruct.extractors.yaml` registers plugins. See the [deconstruct package README](https://github.com/dukk/doc-repo-tools#readme).
 
 ## Checklist
 
-1. Place source files outside `knowledge/` or import directly into the target package path.
-2. Run deconstruct; verify `.original/` matches the source bytes.
-3. Edit generated title-named `.md` source frontmatter/body as needed.
-4. Update category + root indexes and `knowledge/log.md`.
-5. Run `pnpm okf:check`, then `pnpm convert` to verify round-trip export.
-
-## Boundaries
-
-- Deconstruct output is a starting point — refine structure and links manually or with `okf-author`.
-- Do not commit `.output/` exports.
-- Tooling lives in [doc-repo-tools](https://github.com/dukk/doc-repo-tools) (`@dukk/doc-repo-deconstruct`).
+1. Confirm Pandoc (or custom extractor) is available.
+2. Choose an output path under `publications/` (company or clients).
+3. Run deconstruct; verify `.original/` and generated Markdown.
+4. Convert frontmatter into sidecar `.meta-data.yml`; remove body frontmatter.
+5. Run `pnpm okf:check`, then `pnpm convert` when ready to export.
+6. Do not edit files under `.original/`.

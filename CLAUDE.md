@@ -13,6 +13,6 @@ See the skill and subagent tables in [AGENTS.md](AGENTS.md).
 
 ## Working style
 
-- Prefer editing `knowledge/` concepts over inventing parallel docs outside the OKF bundle.
+- Prefer editing `knowledge/` concepts for atoms; use `publications/` for exportable multi-concept docs.
 - When adding concepts, keep `knowledge/index.md` and `knowledge/log.md` in sync.
 - Use `/okf-author`, `/convert-document`, and `/knowledge-audit` skills for those workflows.

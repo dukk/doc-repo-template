@@ -1,9 +1,9 @@
 ---
 name: convert-document
 description: >-
-  Export OKF document packages to PDF, DOCX, HTML, or PPTX using the
-  doc-repo convert CLI (Pandoc). Use when the user asks to publish,
-  export, or convert documents.
+  Export publication packages to PDF, DOCX, HTML, or PPTX using the
+  repo convert wrapper and doc-repo convert CLI (Pandoc). Use when the user
+  asks to publish, export, or convert documents.
 ---
 
 # Convert document
@@ -18,33 +18,35 @@ description: >-
 
 ```bash
 # Use formats/out/documents/assets/links from convert.yaml
-pnpm convert knowledge/text-and-diagrams/delivery-workflow
+pnpm convert publications/company/operating-model
 
 # Override formats
-pnpm convert --format pdf,docx <package-or-tree>
+pnpm convert --format pdf,docx publications/<package-or-tree>
 
 # Override output directory (cwd-relative)
-pnpm convert <package> --out .output
+pnpm convert publications/<package> --out .output
 ```
 
 Supported formats: `pdf`, `docx`, `html`, `pptx`.
 
 ## Behavior notes
 
-- Input must be a document package (`convert.yaml` + Markdown sources) or a tree containing packages.
+- `pnpm convert` runs `scripts/convert.mjs`, which merges each `<stem>.meta-data.yml` into temp Markdown (stripping `knowledge:`) then calls `doc-convert`.
+- Input must be a publication package (`convert.yaml` + Markdown + sidecar) or a tree under `publications/`.
+- **`knowledge/` is refused** — concepts are not exported.
 - `documents[]` groups ordered sources into named outputs; `sources.unlisted` controls leftovers (`individual` | `ignore` | `error`).
 - `assets.mode: generate` copies local images and can render Mermaid to SVG **before** Pandoc.
 - `links.markdown: output` rewrites `.md` links to sibling output artifacts (or same-document anchors).
 - `options.cover_page: true` prepends a title/subtitle/author/date block and a page break before the body.
-- `options.reference_doc` (package-relative path, usually `.original/*.docx`) is passed to Pandoc as `--reference-doc` for **docx** and **pptx**, preserving Word styles, headers, and footers from the reference. Deconstruct sets this automatically for DOCX imports.
-- Reserved `index.md` / `log.md` are not packages and are skipped when walking.
+- `options.reference_doc` (package-relative path, usually `.original/*.docx`) is passed to Pandoc as `--reference-doc` for **docx** and **pptx**.
 - Default output is `.output/` beside the package (gitignored).
-- Convert tooling lives in [doc-repo-tools](https://github.com/dukk/doc-repo-tools) (`@dukk/doc-repo-convert`), not in this template.
+- Convert tooling lives in [doc-repo-tools](https://github.com/dukk/doc-repo-tools) (`@dukk/doc-repo-convert`), wrapped by this repo's `scripts/convert.mjs`.
 
 ## Checklist
 
-1. Confirm the path is a package under `knowledge/` (or an intentional template).
-2. Ensure Pandoc (and Mermaid CLI if needed) are available.
-3. Ensure `@dukk/doc-repo-convert` is installed (`pnpm install`).
-4. Run convert and report logical documents, outputs, and assets.
-5. Do not commit generated files under `.output/`.
+1. Confirm the path is under `publications/` (not `knowledge/`).
+2. Ensure each Markdown source has a matching `<stem>.meta-data.yml` and no frontmatter.
+3. Ensure Pandoc (and Mermaid CLI if needed) are available.
+4. Ensure `@dukk/doc-repo-convert` is installed (`pnpm install`).
+5. Run convert and report logical documents, outputs, and assets.
+6. Do not commit generated files under `.output/`.

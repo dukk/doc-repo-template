@@ -1,0 +1,9 @@
+title: Operating model
+description: Sample publication describing how the organization plans, delivers, and reviews work.
+type: Reference
+status: draft
+audience: internal
+tags: [sample, operating-model]
+timestamp: 2026-09-12T00:00:00Z
+knowledge:
+  - /company/example-company.md

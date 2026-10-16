@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * OKF v0.1 soft/hard conformance check for knowledge/.
- * Concepts are document packages: convert.yaml + Markdown sources.
+ * Soft/hard conformance check for knowledge/ (OKF atoms) and publications/.
  * Hard errors → exit 1. Warnings are printed but non-fatal.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -15,7 +14,8 @@ import {
 } from "./primary-source.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const bundleRoot = path.join(root, "knowledge");
+const knowledgeRoot = path.join(root, "knowledge");
+const publicationsRoot = path.join(root, "publications");
 const RESERVED = new Set(["index.md", "log.md"]);
 
 /** @type {string[]} */
@@ -31,6 +31,10 @@ function toPosix(p) {
   return p.replaceAll("\\", "/");
 }
 
+function stripLeadingSlash(href) {
+  return href.replace(/^\//, "");
+}
+
 function walkMd(dir) {
   /** @type {string[]} */
   const files = [];
@@ -38,7 +42,13 @@ function walkMd(dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === ".output" || entry.name === ".original" || entry.name === "node_modules") continue;
+      if (
+        entry.name === ".output" ||
+        entry.name === ".original" ||
+        entry.name === "node_modules"
+      ) {
+        continue;
+      }
       files.push(...walkMd(full));
     } else if (entry.name.toLowerCase().endsWith(".md")) {
       files.push(full);
@@ -57,12 +67,30 @@ function walkDirs(dir) {
   if (!existsSync(dir)) return dirs;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    if (entry.name === ".output" || entry.name === ".original" || entry.name === "node_modules") continue;
+    if (
+      entry.name === ".output" ||
+      entry.name === ".original" ||
+      entry.name === "node_modules"
+    ) {
+      continue;
+    }
     const full = path.join(dir, entry.name);
     dirs.push(full);
     dirs.push(...walkDirs(full));
   }
   return dirs;
+}
+
+/**
+ * @param {string} target
+ * @param {string} base
+ */
+function isPathUnder(target, base) {
+  const relative = path.relative(base, target);
+  return (
+    relative === "" ||
+    (!relative.startsWith("..") && !path.isAbsolute(relative))
+  );
 }
 
 /**
@@ -87,6 +115,7 @@ function parseDoc(raw) {
 }
 
 function collectLinks(body) {
+  /** @type {string[]} */
   const links = [];
   const re = /\[[^\]]*\]\(([^)]+)\)/g;
   let m;
@@ -102,6 +131,12 @@ function collectLinks(body) {
   return links;
 }
 
+/**
+ * Resolve a link from knowledge or publications.
+ * `/publications/...` → repo root; other `/...` → knowledge/.
+ * @param {string} fromFile
+ * @param {string} href
+ */
 function resolveLink(fromFile, href) {
   if (
     href.startsWith("http://") ||
@@ -115,7 +150,12 @@ function resolveLink(fromFile, href) {
 
   let target;
   if (href.startsWith("/")) {
-    target = path.join(bundleRoot, href.replace(/^\//, ""));
+    const stripped = stripLeadingSlash(href);
+    if (stripped.startsWith("publications/")) {
+      target = path.join(root, stripped);
+    } else {
+      target = path.join(knowledgeRoot, stripped);
+    }
   } else {
     target = path.resolve(path.dirname(fromFile), href);
   }
@@ -129,6 +169,8 @@ function resolveLink(fromFile, href) {
     if (existsSync(legacy)) return legacy;
     const cfg = path.join(target, CONVERT_CONFIG_FILE);
     if (existsSync(cfg)) return cfg;
+    const slugMd = path.join(target, `${path.basename(target)}.md`);
+    if (existsSync(slugMd)) return slugMd;
     return target;
   }
   return target;
@@ -165,14 +207,26 @@ function validateConvertConfig(pkgDir) {
     return;
   }
 
-  const sources = data.sources && typeof data.sources === "object" ? data.sources : {};
-  warnEnum(sources.unlisted, ["individual", "ignore", "error"], "sources.unlisted", pkgRel);
+  const sources =
+    data.sources && typeof data.sources === "object" ? data.sources : {};
+  warnEnum(
+    sources.unlisted,
+    ["individual", "ignore", "error"],
+    "sources.unlisted",
+    pkgRel,
+  );
 
-  const assets = data.assets && typeof data.assets === "object" ? data.assets : {};
+  const assets =
+    data.assets && typeof data.assets === "object" ? data.assets : {};
   warnEnum(assets.mode, ["generate", "reference"], "assets.mode", pkgRel);
 
   const links = data.links && typeof data.links === "object" ? data.links : {};
-  warnEnum(links.markdown, ["output", "preserve", "remove"], "links.markdown", pkgRel);
+  warnEnum(
+    links.markdown,
+    ["output", "preserve", "remove"],
+    "links.markdown",
+    pkgRel,
+  );
   warnEnum(
     links.missing_target,
     ["warn", "error", "preserve"],
@@ -197,7 +251,9 @@ function validateConvertConfig(pkgDir) {
         continue;
       }
       if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(name)) {
-        errors.push(`${pkgRel}: documents[${index}].name "${name}" is not a safe basename`);
+        errors.push(
+          `${pkgRel}: documents[${index}].name "${name}" is not a safe basename`,
+        );
       }
       if (names.has(name)) {
         errors.push(`${pkgRel}: duplicate document name "${name}"`);
@@ -206,12 +262,16 @@ function validateConvertConfig(pkgDir) {
 
       const list = Array.isArray(item.sources) ? item.sources.map(String) : [];
       if (list.length === 0) {
-        errors.push(`${pkgRel}: documents[${index}] (${name}) has empty sources`);
+        errors.push(
+          `${pkgRel}: documents[${index}] (${name}) has empty sources`,
+        );
       }
       for (const src of list) {
         const normalized = toPosix(src).replace(/^\.\//, "");
         if (claimed.has(normalized)) {
-          errors.push(`${pkgRel}: source "${normalized}" listed in multiple documents`);
+          errors.push(
+            `${pkgRel}: source "${normalized}" listed in multiple documents`,
+          );
         }
         claimed.add(normalized);
         const abs = path.resolve(pkgDir, normalized);
@@ -228,127 +288,239 @@ function validateConvertConfig(pkgDir) {
   }
 }
 
-if (!existsSync(bundleRoot)) {
-  console.error("Error: knowledge/ bundle not found");
-  process.exit(1);
-}
-
-// Ensure yaml is resolvable from repo root tooling
-let yamlOk = true;
-try {
-  parseYaml("a: 1");
-} catch {
-  yamlOk = false;
-}
-if (!yamlOk) {
-  console.error("Error: yaml package unavailable for okf-check");
-  process.exit(1);
-}
-
-const mdFiles = walkMd(bundleRoot);
-const domains = readdirSync(bundleRoot, { withFileTypes: true })
-  .filter((d) => d.isDirectory())
-  .map((d) => d.name);
-
-for (const domain of domains) {
-  const indexPath = path.join(bundleRoot, domain, "index.md");
-  if (!existsSync(indexPath)) {
-    warnings.push(`missing domain index: knowledge/${domain}/index.md`);
+/**
+ * @param {string} href
+ */
+function resolveKnowledgeRef(href) {
+  const stripped = stripLeadingSlash(href);
+  if (stripped.startsWith("publications/")) {
+    return path.join(root, stripped);
   }
+  return path.join(knowledgeRoot, stripped);
 }
 
-/** @type {Set<string>} */
-const packageDirs = new Set();
-/** @type {Set<string>} */
-const packageSourceFiles = new Set();
+function checkKnowledge() {
+  if (!existsSync(knowledgeRoot)) {
+    errors.push("knowledge/ bundle not found");
+    return { mdCount: 0, conceptCount: 0 };
+  }
 
-for (const dir of walkDirs(bundleRoot)) {
-  const cfgPath = path.join(dir, CONVERT_CONFIG_FILE);
-  if (!existsSync(cfgPath)) continue;
-  packageDirs.add(path.normalize(dir));
-  validateConvertConfig(dir);
+  const domains = readdirSync(knowledgeRoot, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
 
-  // Collect markdown sources inside package (excluding nested packages)
-  for (const file of walkMd(dir)) {
-    const parentPkg = [...packageDirs].find(
-      (pkg) =>
-        path.normalize(file).startsWith(path.normalize(pkg) + path.sep) ||
-        path.normalize(file) === path.normalize(pkg),
-    );
-    // Only attribute to this package if nearest package is this dir
-    let nearest = dir;
-    let cursor = path.dirname(file);
-    while (true) {
-      if (existsSync(path.join(cursor, CONVERT_CONFIG_FILE))) {
-        nearest = cursor;
-        break;
-      }
-      const parent = path.dirname(cursor);
-      if (parent === cursor) break;
-      cursor = parent;
+  for (const domain of domains) {
+    const indexPath = path.join(knowledgeRoot, domain, "index.md");
+    if (!existsSync(indexPath)) {
+      warnings.push(`missing domain index: knowledge/${domain}/index.md`);
     }
-    if (path.normalize(nearest) !== path.normalize(dir)) continue;
-    if (RESERVED.has(path.basename(file))) continue;
-    packageSourceFiles.add(path.normalize(file));
   }
-}
 
-for (const file of mdFiles) {
-  const name = path.basename(file);
-  const raw = readFileSync(file, "utf8");
-  const { frontmatter, body, fields } = parseDoc(raw);
-  const isReserved = RESERVED.has(name);
-  const isRootIndex =
-    path.normalize(file) === path.normalize(path.join(bundleRoot, "index.md"));
-
-  if (isReserved) {
-    if (name === "index.md" && frontmatter !== null && !isRootIndex) {
-      warnings.push(
-        `${rel(file)}: domain index.md usually has no frontmatter (OKF §6)`,
+  for (const dir of walkDirs(knowledgeRoot)) {
+    const cfgPath = path.join(dir, CONVERT_CONFIG_FILE);
+    if (existsSync(cfgPath)) {
+      errors.push(
+        `${rel(cfgPath)}: convert.yaml is not allowed under knowledge/ (use publications/)`,
       );
     }
+  }
+  const rootCfg = path.join(knowledgeRoot, CONVERT_CONFIG_FILE);
+  if (existsSync(rootCfg)) {
+    errors.push(
+      `${rel(rootCfg)}: convert.yaml is not allowed under knowledge/ (use publications/)`,
+    );
+  }
+
+  const mdFiles = walkMd(knowledgeRoot);
+  let conceptCount = 0;
+
+  for (const file of mdFiles) {
+    const name = path.basename(file);
+    const raw = readFileSync(file, "utf8");
+    const { frontmatter, body, fields } = parseDoc(raw);
+    const isReserved = RESERVED.has(name);
+    const isRootIndex =
+      path.normalize(file) ===
+      path.normalize(path.join(knowledgeRoot, "index.md"));
+
+    if (isReserved) {
+      if (name === "index.md" && frontmatter !== null && !isRootIndex) {
+        warnings.push(
+          `${rel(file)}: domain index.md usually has no frontmatter (OKF §6)`,
+        );
+      }
+      for (const href of collectLinks(body)) {
+        const resolved = resolveLink(file, href);
+        if (resolved && !existsSync(resolved)) {
+          warnings.push(`${rel(file)}: broken link → ${href}`);
+        }
+      }
+      continue;
+    }
+
+    conceptCount += 1;
+
+    if (frontmatter === null) {
+      errors.push(`${rel(file)}: missing YAML frontmatter`);
+      continue;
+    }
+    if (!fields.type) {
+      errors.push(`${rel(file)}: frontmatter missing required non-empty type`);
+    }
+    if (!fields.title) {
+      warnings.push(`${rel(file)}: missing recommended title`);
+    }
+    if (!fields.description) {
+      warnings.push(`${rel(file)}: missing recommended description`);
+    }
+
     for (const href of collectLinks(body)) {
       const resolved = resolveLink(file, href);
       if (resolved && !existsSync(resolved)) {
         warnings.push(`${rel(file)}: broken link → ${href}`);
       }
     }
-    continue;
   }
 
-  const inPackage = packageSourceFiles.has(path.normalize(file));
-  if (!inPackage) {
-    // Markdown outside a convert.yaml package
-    warnings.push(
-      `${rel(file)}: markdown outside a document package (missing nearby convert.yaml)`,
-    );
-    continue;
-  }
-
-  if (frontmatter === null) {
-    errors.push(`${rel(file)}: missing YAML frontmatter`);
-    continue;
-  }
-  if (!fields.type) {
-    errors.push(`${rel(file)}: frontmatter missing required non-empty type`);
-  }
-  if (!fields.title) {
-    warnings.push(`${rel(file)}: missing recommended title`);
-  }
-  if (!fields.description) {
-    warnings.push(`${rel(file)}: missing recommended description`);
-  }
-
-  for (const href of collectLinks(body)) {
-    const resolved = resolveLink(file, href);
-    if (resolved && !existsSync(resolved)) {
-      warnings.push(`${rel(file)}: broken link → ${href}`);
-    }
-  }
+  return { mdCount: mdFiles.length, conceptCount };
 }
 
+function checkPublications() {
+  if (!existsSync(publicationsRoot)) {
+    return { packageCount: 0, mdCount: 0 };
+  }
+
+  /** @type {string[]} */
+  const packageDirs = [];
+  if (existsSync(path.join(publicationsRoot, CONVERT_CONFIG_FILE))) {
+    packageDirs.push(publicationsRoot);
+  }
+  for (const dir of walkDirs(publicationsRoot)) {
+    if (existsSync(path.join(dir, CONVERT_CONFIG_FILE))) {
+      packageDirs.push(dir);
+    }
+  }
+
+  let mdCount = 0;
+
+  for (const pkgDir of packageDirs) {
+    validateConvertConfig(pkgDir);
+
+    for (const file of walkMd(pkgDir)) {
+      let nearest = pkgDir;
+      let cursor = path.dirname(file);
+      while (true) {
+        if (existsSync(path.join(cursor, CONVERT_CONFIG_FILE))) {
+          nearest = cursor;
+          break;
+        }
+        const parent = path.dirname(cursor);
+        if (parent === cursor) break;
+        cursor = parent;
+      }
+      if (path.normalize(nearest) !== path.normalize(pkgDir)) continue;
+
+      const name = path.basename(file);
+      if (
+        RESERVED.has(name.toLowerCase()) ||
+        name.toLowerCase() === "readme.md"
+      ) {
+        continue;
+      }
+
+      mdCount += 1;
+      const raw = readFileSync(file, "utf8");
+      const { frontmatter, body } = parseDoc(raw);
+      const stem = name.replace(/\.md$/i, "");
+      const metaPath = path.join(pkgDir, `${stem}.meta-data.yml`);
+
+      if (frontmatter !== null) {
+        errors.push(
+          `${rel(file)}: publication Markdown must not contain frontmatter (use ${stem}.meta-data.yml)`,
+        );
+      }
+
+      if (!existsSync(metaPath)) {
+        errors.push(`${rel(file)}: missing sidecar ${stem}.meta-data.yml`);
+      } else {
+        let meta;
+        try {
+          meta = parseYaml(readFileSync(metaPath, "utf8")) ?? {};
+        } catch (err) {
+          errors.push(
+            `${rel(metaPath)}: invalid YAML (${err instanceof Error ? err.message : String(err)})`,
+          );
+          meta = null;
+        }
+        if (meta && typeof meta === "object" && !Array.isArray(meta)) {
+          if (!meta.title) {
+            warnings.push(`${rel(metaPath)}: missing recommended title`);
+          }
+          if (!meta.description) {
+            warnings.push(`${rel(metaPath)}: missing recommended description`);
+          }
+          if (Array.isArray(meta.knowledge)) {
+            for (const ref of meta.knowledge) {
+              const href = String(ref);
+              const resolved = resolveKnowledgeRef(href);
+              if (!existsSync(resolved)) {
+                warnings.push(
+                  `${rel(metaPath)}: knowledge ref missing → ${href}`,
+                );
+              }
+            }
+          }
+        }
+      }
+
+      for (const href of collectLinks(body)) {
+        if (
+          href.startsWith("http://") ||
+          href.startsWith("https://") ||
+          href.startsWith("mailto:") ||
+          href.startsWith("#") ||
+          href.startsWith("data:")
+        ) {
+          continue;
+        }
+
+        // Absolute paths that are not /publications/ are treated as knowledge refs
+        if (href.startsWith("/") && !href.startsWith("/publications/")) {
+          errors.push(
+            `${rel(file)}: publication body must not link into knowledge/ (${href}); use ${stem}.meta-data.yml knowledge: instead`,
+          );
+          continue;
+        }
+
+        const resolved = resolveLink(file, href);
+        if (resolved && isPathUnder(resolved, knowledgeRoot)) {
+          errors.push(
+            `${rel(file)}: publication body must not link into knowledge/ (${href}); use ${stem}.meta-data.yml knowledge: instead`,
+          );
+          continue;
+        }
+        if (resolved && !existsSync(resolved)) {
+          warnings.push(`${rel(file)}: broken link → ${href}`);
+        }
+      }
+    }
+  }
+
+  return { packageCount: packageDirs.length, mdCount };
+}
+
+try {
+  parseYaml("a: 1");
+} catch {
+  console.error("Error: yaml package unavailable for okf-check");
+  process.exit(1);
+}
+
+const knowledgeStats = checkKnowledge();
+const publicationStats = checkPublications();
+
 console.log(
-  `OKF check: scanned ${mdFiles.length} markdown file(s) under knowledge/ (${packageDirs.size} document package(s))`,
+  `OKF check: knowledge/ ${knowledgeStats.mdCount} markdown (${knowledgeStats.conceptCount} concept(s)); publications/ ${publicationStats.mdCount} markdown (${publicationStats.packageCount} package(s))`,
 );
 
 if (warnings.length > 0) {

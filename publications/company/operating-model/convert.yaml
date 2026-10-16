@@ -2,7 +2,6 @@ out: .output
 formats:
   - pdf
   - docx
-  - html
 options:
   toc: true
   cover_page: false
@@ -19,22 +18,13 @@ sources:
     - ".original/**"
     - "**/index.md"
     - "**/log.md"
-  unlisted: ignore
-documents:
-  - name: delivery-workflow
-    sources:
-      - 01-purpose.md
-      - 02-intake.md
-      - 03-authoring.md
-      - 04-review-publish.md
-    metadata:
-      title: Delivery workflow
+  unlisted: individual
 assets:
-  mode: generate
+  mode: reference
   directory: assets
   diagrams:
-    mermaid: true
-  copy_referenced_images: true
+    mermaid: false
+  copy_referenced_images: false
 links:
   markdown: output
   missing_target: warn

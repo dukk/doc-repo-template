@@ -1,18 +1,8 @@
----
-type: Reference
-title: Operating model
-description: Text-heavy sample describing how the organization plans, delivers, and reviews work.
-tags: [sample, operating-model]
-timestamp: 2026-07-18T00:00:00Z
-status: draft
-audience: internal
----
-
 # Purpose
 
-This document is a **text-heavy** sample. Use it as a starting point for policies, playbooks, briefs, and other narrative concepts where explanation matters more than visuals.
+This document is a **sample publication**: a text-heavy operating model you can export with `pnpm convert`. Use it as a starting point for policies, playbooks, briefs, and other narrative documents where explanation matters more than visuals.
 
-Replace the placeholder organization language below with your own facts. Prefer linking related concepts instead of duplicating them.
+Replace the placeholder organization language below with your own facts. Prefer linking related **knowledge** concepts from the publication sidecar (`knowledge:` in `.meta-data.yml`) instead of Markdown body links into `knowledge/`.
 
 # Context
 
@@ -88,15 +78,17 @@ If the answer to (4) is “nothing,” confirm that intentionally. Silence is ho
 
 # Writing standard for this bundle
 
-When you add or revise concepts under `knowledge/`:
+When you add or revise **knowledge** concepts:
 
 - Keep YAML frontmatter with a non-empty `type`
 - Prefer `title`, `description`, `tags`, and `timestamp`
-- Use bundle-relative links such as `[Delivery workflow](/text-and-diagrams/delivery-workflow/)`
-- Update the folder `index.md` and root [`index.md`](/index.md) when adding concepts
-- Add a newest-first note to [`log.md`](/log.md) for structural changes
+- Use bundle-relative links such as `/company/example-company.md`
+- Link publications as `/publications/company/operating-model/operating-model.md`
+- Update the folder `index.md` and root `knowledge/index.md` when adding concepts
+- Add a newest-first note to `knowledge/log.md` for structural changes
 
-# Related samples
+When you add or revise **publications**:
 
-- [Delivery workflow](/text-and-diagrams/delivery-workflow/) — how planning becomes shipped work (prose + diagrams)
-- [System map](/diagrams/system-map/system-map.md) — diagram-first view of tools and flows
+- No Markdown frontmatter — put identity in `<slug>.meta-data.yml`
+- List related knowledge under sidecar `knowledge:` (do not paste knowledge paths as Markdown links in this body)
+- Do not link from the publication body into `knowledge/`
